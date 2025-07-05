@@ -1,0 +1,20 @@
+# Wind Tunnel Controller - Python Dependencies
+# Install these packages with: pip install -r requirements.txt
+
+# Main GUI framework - modern, touch-friendly graphics
+kivy>=2.0.0
+
+# Optional: Better performance on some systems
+# Uncomment these if you have performance issues:
+# kivy[base,media,dev]
+# kivymd
+
+# Note: No other dependencies needed!
+# This app uses only Python standard libraries plus Kivy
+# - math (built-in)
+# - random (built-in) 
+# - time (built-in)
+# - All GUI components are pure Kivy
+
+# For development/debugging (optional):
+# kivy-garden 
