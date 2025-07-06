@@ -1,250 +1,225 @@
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen
-from kivy.graphics import Color, Rectangle, RoundedRectangle
+"""
+Material Design Mode Selection Screen
+Optimized for 800x480 touchscreen with KivyMD components
+"""
+
+from kivymd.uix.screen import MDScreen
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.gridlayout import MDGridLayout
+from kivymd.uix.button import MDRaisedButton, MDIconButton
+from kivymd.uix.label import MDLabel
+from kivymd.uix.card import MDCard
+from kivymd.uix.toolbar import MDTopAppBar
 from kivy.metrics import dp
-from kivy.animation import Animation
+from kivy.app import App
 
-class ModernButton(Button):
+class MaterialModeScreen(MDScreen):
     """
-    A modern button with hover effects, shadows, and sleek styling.
-    """
-    
-    def __init__(self, button_color=(0.5, 0.5, 0.5, 1), **kwargs):
-        # Set default button color first
-        self.button_color = button_color
-        
-        super().__init__(**kwargs)
-        self.background_color = (0, 0, 0, 0)  # Transparent default background
-        self.bind(state=self.on_state_change)
-        self.create_background()
-    
-    def create_background(self):
-        """Create modern button background with shadow"""
-        with self.canvas.before:
-            # Shadow
-            Color(0, 0, 0, 0.3)
-            self.shadow_rect = RoundedRectangle(
-                size=(self.width + dp(6), self.height + dp(6)),
-                pos=(self.x - dp(3), self.y - dp(3)),
-                radius=[dp(15)]
-            )
-            
-            # Main background
-            Color(*self.button_color)
-            self.bg_rect = RoundedRectangle(
-                size=self.size,
-                pos=self.pos,
-                radius=[dp(12)]
-            )
-        
-        self.bind(size=self.update_bg, pos=self.update_bg)
-    
-    def update_bg(self, *args):
-        """Update background when size/position changes"""
-        self.shadow_rect.size = (self.width + dp(6), self.height + dp(6))
-        self.shadow_rect.pos = (self.x - dp(3), self.y - dp(3))
-        self.bg_rect.size = self.size
-        self.bg_rect.pos = self.pos
-    
-    def set_button_color(self, color):
-        """Set the button color and update graphics"""
-        self.button_color = color
-        # Update the background color
-        with self.canvas.before:
-            Color(*self.button_color)
-            self.bg_rect = RoundedRectangle(
-                size=self.size,
-                pos=self.pos,
-                radius=[dp(12)]
-            )
-    
-    def on_state_change(self, instance, value):
-        """Handle button press animation"""
-        if value == 'down':
-            # Pressed state - darker color
-            with self.canvas.before:
-                Color(*[c * 0.8 for c in self.button_color])
-                self.bg_rect = RoundedRectangle(
-                    size=self.size,
-                    pos=self.pos,
-                    radius=[dp(12)]
-                )
-        else:
-            # Normal state
-            with self.canvas.before:
-                Color(*self.button_color)
-                self.bg_rect = RoundedRectangle(
-                    size=self.size,
-                    pos=self.pos,
-                    radius=[dp(12)]
-                )
-
-class ModernModeScreen(Screen):
-    """
-    A beautiful, modern mode selection screen with professional styling,
-    gradients, and sleek button designs.
+    Material Design mode selection screen
+    Optimized for 7" touchscreen (800x480)
     """
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.name = 'mode_screen'
         
-        # Modern color scheme
-        self.bg_color = (0.08, 0.08, 0.12, 1)  # Deep dark blue
-        self.accent_color = (0.2, 0.6, 1.0, 1)  # Modern blue
-        self.success_color = (0.2, 0.8, 0.3, 1)  # Green
-        self.danger_color = (1.0, 0.3, 0.3, 1)  # Red
+        # Create the layout
+        self.create_layout()
         
-        # Create gradient background
-        with self.canvas.before:
-            # Background gradient effect
-            Color(*self.bg_color)
-            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
-            
-            # Overlay pattern for depth
-            Color(0.1, 0.1, 0.15, 0.5)
-            self.overlay_rect = Rectangle(size=self.size, pos=self.pos)
+        print("📱 Material Design mode screen created - 800×480 optimized")
+    
+    def create_layout(self):
+        """Create the Material Design layout"""
+        # Main container
+        main_layout = MDBoxLayout(
+            orientation='vertical',
+            spacing=dp(16),
+            adaptive_height=True,
+            padding=dp(24)
+        )
         
-        self.bind(size=self.update_background, pos=self.update_background)
+        # Header card
+        header_card = self.create_header_card()
+        main_layout.add_widget(header_card)
         
-        # Create the main layout
-        main_layout = BoxLayout(orientation='vertical', spacing=dp(40), padding=dp(50))
+        # Buttons card
+        buttons_card = self.create_buttons_card()
+        main_layout.add_widget(buttons_card)
         
-        # Header section with modern styling
-        header_layout = BoxLayout(orientation='vertical', size_hint_y=0.4, spacing=dp(20))
+        # Footer info
+        footer = self.create_footer()
+        main_layout.add_widget(footer)
+        
+        self.add_widget(main_layout)
+    
+    def create_header_card(self):
+        """Create header card with title and status"""
+        card = MDCard(
+            elevation=dp(4),
+            size_hint_y=None,
+            height=dp(120),
+            padding=dp(16),
+            radius=[dp(12)]
+        )
+        
+        header_layout = MDBoxLayout(
+            orientation='vertical',
+            spacing=dp(8),
+            adaptive_height=True
+        )
         
         # Main title
-        title_label = Label(
-            text='WIND TUNNEL',
-            font_size=dp(48),
-            color=(1, 1, 1, 1),
-            bold=True,
-            size_hint_y=0.6
+        title = MDLabel(
+            text="WIND TUNNEL CONTROL",
+            theme_text_color="Primary",
+            font_style="H4",
+            size_hint_y=None,
+            height=dp(40),
+            halign="center"
         )
-        header_layout.add_widget(title_label)
+        header_layout.add_widget(title)
         
         # Subtitle
-        subtitle_label = Label(
-            text='CONTROL SYSTEM',
-            font_size=dp(32),
-            color=self.accent_color,
-            size_hint_y=0.4
+        subtitle = MDLabel(
+            text="Professional Material Design Interface",
+            theme_text_color="Secondary",
+            font_style="Subtitle1",
+            size_hint_y=None,
+            height=dp(24),
+            halign="center"
         )
-        header_layout.add_widget(subtitle_label)
-        
-        main_layout.add_widget(header_layout)
+        header_layout.add_widget(subtitle)
         
         # Status indicator
-        status_layout = BoxLayout(orientation='horizontal', size_hint_y=0.1, spacing=dp(10))
+        status_layout = MDBoxLayout(
+            orientation='horizontal',
+            spacing=dp(8),
+            adaptive_height=True,
+            size_hint_y=None,
+            height=dp(32)
+        )
         
-        status_icon = Label(
-            text='*',
-            font_size=dp(20),
-            color=self.success_color,
-            size_hint_x=0.1
+        # Status icon
+        status_icon = MDIconButton(
+            icon="circle",
+            theme_icon_color="Custom",
+            icon_color=(0, 1, 0, 1),  # Green
+            size_hint_x=None,
+            width=dp(32)
         )
         status_layout.add_widget(status_icon)
         
-        status_text = Label(
-            text='SYSTEM READY - SELECT OPERATION MODE',
-            font_size=dp(16),
-            color=(0.8, 0.8, 0.8, 1),
-            size_hint_x=0.9
+        # Status text
+        status_text = MDLabel(
+            text="SYSTEM READY - SELECT OPERATION MODE",
+            theme_text_color="Primary",
+            font_style="Body1",
+            halign="left"
         )
         status_layout.add_widget(status_text)
         
-        main_layout.add_widget(status_layout)
+        header_layout.add_widget(status_layout)
+        card.add_widget(header_layout)
         
-        # Button section
-        button_layout = BoxLayout(orientation='vertical', spacing=dp(25), size_hint_y=0.4)
-        
-        # Simulation Mode button
-        self.simulation_button = ModernButton(
-            text='>> SIMULATION MODE',
-            font_size=dp(24),
-            color=(1, 1, 1, 1),
-            bold=True,
-            size_hint_y=0.5,
-            button_color=self.success_color  # Pass color during creation
-        )
-        self.simulation_button.bind(on_press=self.start_simulation)
-        button_layout.add_widget(self.simulation_button)
-        
-        # Exit button
-        self.exit_button = ModernButton(
-            text='X EXIT SYSTEM',
-            font_size=dp(24),
-            color=(1, 1, 1, 1),
-            bold=True,
-            size_hint_y=0.5,
-            button_color=self.danger_color  # Pass color during creation
-        )
-        self.exit_button.bind(on_press=self.exit_app)
-        button_layout.add_widget(self.exit_button)
-        
-        main_layout.add_widget(button_layout)
-        
-        # Footer info
-        info_layout = BoxLayout(orientation='vertical', size_hint_y=0.1, spacing=dp(5))
-        
-        info_label = Label(
-            text='Touch buttons above to select mode • F11 for fullscreen',
-            font_size=dp(14),
-            color=(0.5, 0.5, 0.5, 1),
-            size_hint_y=0.5
-        )
-        info_layout.add_widget(info_label)
-        
-        version_label = Label(
-            text='v1.0 | Modern UI | Kivy Framework',
-            font_size=dp(12),
-            color=(0.4, 0.4, 0.4, 1),
-            size_hint_y=0.5
-        )
-        info_layout.add_widget(version_label)
-        
-        main_layout.add_widget(info_layout)
-        
-        # Add everything to the screen
-        self.add_widget(main_layout)
-        
-        print("Modern mode selection screen created with professional styling")
+        return card
     
-    def update_background(self, *args):
-        """Update background when size changes"""
-        self.bg_rect.size = self.size
-        self.bg_rect.pos = self.pos
-        self.overlay_rect.size = self.size
-        self.overlay_rect.pos = self.pos
+    def create_buttons_card(self):
+        """Create buttons card with mode selection"""
+        card = MDCard(
+            elevation=dp(6),
+            size_hint_y=None,
+            height=dp(220),
+            padding=dp(20),
+            radius=[dp(12)]
+        )
+        
+        buttons_layout = MDBoxLayout(
+            orientation='vertical',
+            spacing=dp(16),
+            adaptive_height=True
+        )
+        
+        # Simulation Mode Button
+        simulation_button = MDRaisedButton(
+            text="SIMULATION MODE",
+            icon="flash",
+            theme_icon_color="Custom",
+            icon_color=(1, 1, 1, 1),
+            md_bg_color=(0.2, 0.8, 0.3, 1),  # Green
+            size_hint_y=None,
+            height=dp(64),
+            font_size=dp(18),
+            elevation=dp(8)
+        )
+        simulation_button.bind(on_press=self.start_simulation)
+        buttons_layout.add_widget(simulation_button)
+        
+        # Exit Button
+        exit_button = MDRaisedButton(
+            text="EXIT APPLICATION",
+            icon="close-circle",
+            theme_icon_color="Custom",
+            icon_color=(1, 1, 1, 1),
+            md_bg_color=(0.9, 0.3, 0.3, 1),  # Red
+            size_hint_y=None,
+            height=dp(64),
+            font_size=dp(18),
+            elevation=dp(8)
+        )
+        exit_button.bind(on_press=self.exit_app)
+        buttons_layout.add_widget(exit_button)
+        
+        card.add_widget(buttons_layout)
+        return card
+    
+    def create_footer(self):
+        """Create footer with instructions"""
+        footer_layout = MDBoxLayout(
+            orientation='vertical',
+            spacing=dp(4),
+            adaptive_height=True,
+            size_hint_y=None,
+            height=dp(60)
+        )
+        
+        # Instructions
+        instructions = MDLabel(
+            text="Touch buttons above to select mode • Optimized for 7\" touchscreen",
+            theme_text_color="Hint",
+            font_style="Caption",
+            size_hint_y=None,
+            height=dp(20),
+            halign="center"
+        )
+        footer_layout.add_widget(instructions)
+        
+        # Version info
+        version_info = MDLabel(
+            text="Material Design UI • 800×480 Resolution • Touch-Friendly Controls",
+            theme_text_color="Hint",
+            font_style="Caption",
+            size_hint_y=None,
+            height=dp(20),
+            halign="center"
+        )
+        footer_layout.add_widget(version_info)
+        
+        return footer_layout
     
     def start_simulation(self, button):
-        """Start simulation mode with modern transition"""
-        print("User selected Simulation Mode")
-        
-        # Create a smooth transition effect
-        anim = Animation(opacity=0.7, duration=0.1)
-        anim.bind(on_complete=self.switch_to_dashboard)
-        anim.start(button)
-    
-    def switch_to_dashboard(self, anim, widget):
-        """Switch to dashboard after animation"""
+        """Start simulation mode"""
+        print("📊 User selected Simulation Mode")
         self.manager.current = 'dashboard'
-        
-        # Reset button opacity
-        widget.opacity = 1.0
     
     def exit_app(self, button):
-        """Exit the application with confirmation"""
-        print("User selected Exit")
-        
-        # Animate button press
-        anim = Animation(opacity=0.7, duration=0.1)
-        anim.bind(on_complete=self.close_app)
-        anim.start(button)
+        """Exit the application"""
+        print("🚪 User selected Exit")
+        App.get_running_app().stop()
     
-    def close_app(self, anim, widget):
-        """Close the application"""
-        from kivy.app import App
-        App.get_running_app().stop() 
+    def on_enter(self):
+        """Called when entering the screen"""
+        print("🏠 Material Design mode selection active")
+    
+    def on_leave(self):
+        """Called when leaving the screen"""
+        print("👋 Leaving mode selection screen") 

@@ -1,99 +1,112 @@
 #!/usr/bin/env python3
 """
-Wind Tunnel Controller - Main Application
-A modern Kivy app with professional graphics and beautiful circular gauges.
-
-This is the main entry point - run this file to start the application.
+Modern Wind Tunnel Controller Application
+Professional Material Design interface with KivyMD for Raspberry Pi touchscreen
+Screen Size: 800x480 (7" touchscreen)
 """
 
-import kivy
-from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.core.window import Window
-from kivy.config import Config
+import os
+import sys
 
-# Import our modern custom screens and simulator
-from gui.modescreen import ModernModeScreen
-from gui.dashboard import ModernDashboardScreen
+# Set window size for 7" touchscreen BEFORE importing Kivy
+os.environ['KIVY_WINDOW_WIDTH'] = '800'
+os.environ['KIVY_WINDOW_HEIGHT'] = '480'
+
+from kivymd.app import MDApp
+from kivymd.uix.screenmanager import MDScreenManager
+from kivy.core.window import Window
+from kivy.logger import Logger
+
+# Import our screens
+from gui.modescreen import MaterialModeScreen
+from gui.dashboard import MaterialDashboardScreen
 from logic.simulator import WindTunnelSimulator
 
-# Configure Kivy for better touchscreen and fullscreen experience
-Config.set('graphics', 'width', '1200')
-Config.set('graphics', 'height', '800')
-Config.set('graphics', 'resizable', True)
-
-# Set minimum Kivy version
-kivy.require('2.0.0')
-
-class WindTunnelApp(App):
+class ModernWindTunnelApp(MDApp):
     """
-    Main application class for the Wind Tunnel Controller.
-    Now with modern, professional graphics and smooth animations.
+    Modern Wind Tunnel Controller with Material Design
+    Optimized for 7" touchscreen (800x480)
     """
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.title = 'Wind Tunnel Controller - Modern UI'
+        self.title = "Wind Tunnel Controller - Material Design"
+        self.theme_cls.theme_style = "Dark"  # Dark theme for professional look
+        self.theme_cls.primary_palette = "Blue"  # Primary color
+        self.theme_cls.accent_palette = "Green"  # Accent color
         
-        # Create the data simulator
+        # Set window properties for touchscreen
+        Window.size = (800, 480)
+        Window.minimum_width = 800
+        Window.minimum_height = 480
+        
+        # Initialize simulator
         self.simulator = WindTunnelSimulator()
         
-        print("Modern Wind Tunnel App initialized")
+        print("🚀 Modern Wind Tunnel Controller - Material Design")
+        print("📱 Optimized for 7\" touchscreen (800×480)")
+        print("🎨 Professional Material Design UI")
+        print("=" * 60)
     
     def build(self):
-        """
-        Build the modern app interface with professional styling.
-        This is called automatically by Kivy when the app starts.
-        """
-        print("Building modern app interface...")
-        
-        # Create the screen manager to handle switching between screens
-        screen_manager = ScreenManager()
-        
-        # Create the modern mode selection screen
-        mode_screen = ModernModeScreen()
-        screen_manager.add_widget(mode_screen)
-        
-        # Create the modern dashboard screen (pass the simulator to it)
-        dashboard_screen = ModernDashboardScreen(self.simulator)
-        screen_manager.add_widget(dashboard_screen)
-        
-        # Start with the mode selection screen
-        screen_manager.current = 'mode_screen'
-        
-        # Set up window properties for better experience
-        Window.clearcolor = (0.05, 0.05, 0.08, 1)  # Dark background
-        
-        print("Modern app interface built successfully")
-        return screen_manager
+        """Build the application with Material Design components"""
+        try:
+            print("Building Material Design interface...")
+            
+            # Create screen manager
+            screen_manager = MDScreenManager()
+            
+            # Create mode selection screen
+            mode_screen = MaterialModeScreen(name='mode_screen')
+            screen_manager.add_widget(mode_screen)
+            
+            # Create dashboard screen
+            dashboard_screen = MaterialDashboardScreen(
+                simulator=self.simulator,
+                name='dashboard'
+            )
+            screen_manager.add_widget(dashboard_screen)
+            
+            print("✅ Material Design interface built successfully")
+            print("🎯 Ready for professional wind tunnel control")
+            print("👆 Touch interface optimized for 7\" screen")
+            print("=" * 60)
+            
+            return screen_manager
+            
+        except Exception as e:
+            print(f"❌ Error building interface: {e}")
+            Logger.exception("Failed to build interface")
+            return None
     
     def on_start(self):
-        """Called when the app starts running"""
-        print("=== Modern Wind Tunnel Controller Started ===")
-        print("Experience beautiful circular gauges and professional graphics")
-        print("Touch the screen to interact • F11 for fullscreen")
-        
-        # Optional: Start in fullscreen mode (great for Pi and kiosks)
-        # Window.fullscreen = True
+        """Called when application starts"""
+        print("🌟 === Material Design Wind Tunnel Controller Started ===")
+        print("💫 Experience professional Material Design interface")
+        print("📐 Perfect for 800×480 touchscreen • Optimized layouts")
+        print("🎨 Dark theme • Touch-friendly controls • Smooth animations")
     
     def on_stop(self):
-        """Called when the app is closing"""
-        print("=== Modern Wind Tunnel Controller Stopped ===")
-        print("Thank you for using our professional control system!")
+        """Called when application stops"""
+        # Clean shutdown
+        if hasattr(self, 'simulator'):
+            self.simulator.stop_simulation()
+        
+        print("🛑 === Material Design Controller Stopped ===")
+        print("🙏 Thank you for using our professional control system!")
 
 def main():
-    """
-    Main function to start the modern application.
-    This is what gets called when you run: python main.py
-    """
-    print("Starting Modern Wind Tunnel Controller...")
-    print("Professional graphics • Smooth animations • Modern UI")
-    print("=" * 60)
-    
-    # Create and run the app
-    app = WindTunnelApp()
-    app.run()
+    """Main application entry point"""
+    try:
+        # Create and run the app
+        app = ModernWindTunnelApp()
+        app.run()
+        
+    except KeyboardInterrupt:
+        print("\n⚠️  Application interrupted by user")
+    except Exception as e:
+        print(f"💥 Critical error: {e}")
+        sys.exit(1)
 
 if __name__ == '__main__':
-    # This runs when the script is executed directly
     main() 

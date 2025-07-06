@@ -1,0 +1,4 @@
+git clone https://github.com/hadefuwa/wind-tunnel-rpi.git
+cd wind-tunnel-rpi
+pip3 install -r requirements.txt
+python3 main.py
