@@ -2,113 +2,236 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
+from kivy.graphics import Color, Rectangle, RoundedRectangle
+from kivy.metrics import dp
+from kivy.animation import Animation
 
-class ModeScreen(Screen):
+class ModernButton(Button):
     """
-    Simple mode selection screen for the wind tunnel app.
-    Shows big buttons for Simulation Mode and Exit.
+    A modern button with hover effects, shadows, and sleek styling.
+    """
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.background_color = (0, 0, 0, 0)  # Transparent default background
+        self.bind(state=self.on_state_change)
+        self.create_background()
+    
+    def create_background(self):
+        """Create modern button background with shadow"""
+        with self.canvas.before:
+            # Shadow
+            Color(0, 0, 0, 0.3)
+            self.shadow_rect = RoundedRectangle(
+                size=(self.width + dp(6), self.height + dp(6)),
+                pos=(self.x - dp(3), self.y - dp(3)),
+                radius=[dp(15)]
+            )
+            
+            # Main background
+            Color(*self.button_color)
+            self.bg_rect = RoundedRectangle(
+                size=self.size,
+                pos=self.pos,
+                radius=[dp(12)]
+            )
+        
+        self.bind(size=self.update_bg, pos=self.update_bg)
+    
+    def update_bg(self, *args):
+        """Update background when size/position changes"""
+        self.shadow_rect.size = (self.width + dp(6), self.height + dp(6))
+        self.shadow_rect.pos = (self.x - dp(3), self.y - dp(3))
+        self.bg_rect.size = self.size
+        self.bg_rect.pos = self.pos
+    
+    def on_state_change(self, instance, value):
+        """Handle button press animation"""
+        if value == 'down':
+            # Pressed state - darker color
+            with self.canvas.before:
+                Color(*[c * 0.8 for c in self.button_color])
+                self.bg_rect = RoundedRectangle(
+                    size=self.size,
+                    pos=self.pos,
+                    radius=[dp(12)]
+                )
+        else:
+            # Normal state
+            with self.canvas.before:
+                Color(*self.button_color)
+                self.bg_rect = RoundedRectangle(
+                    size=self.size,
+                    pos=self.pos,
+                    radius=[dp(12)]
+                )
+
+class ModernModeScreen(Screen):
+    """
+    A beautiful, modern mode selection screen with professional styling,
+    gradients, and sleek button designs.
     """
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.name = 'mode_screen'
         
-        # Create the main layout - everything stacked vertically
-        main_layout = BoxLayout(orientation='vertical', spacing=20, padding=40)
+        # Modern color scheme
+        self.bg_color = (0.08, 0.08, 0.12, 1)  # Deep dark blue
+        self.accent_color = (0.2, 0.6, 1.0, 1)  # Modern blue
+        self.success_color = (0.2, 0.8, 0.3, 1)  # Green
+        self.danger_color = (1.0, 0.3, 0.3, 1)  # Red
         
-        # Add the title
+        # Create gradient background
+        with self.canvas.before:
+            # Background gradient effect
+            Color(*self.bg_color)
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+            
+            # Overlay pattern for depth
+            Color(0.1, 0.1, 0.15, 0.5)
+            self.overlay_rect = Rectangle(size=self.size, pos=self.pos)
+        
+        self.bind(size=self.update_background, pos=self.update_background)
+        
+        # Create the main layout
+        main_layout = BoxLayout(orientation='vertical', spacing=dp(40), padding=dp(50))
+        
+        # Header section with modern styling
+        header_layout = BoxLayout(orientation='vertical', size_hint_y=0.4, spacing=dp(20))
+        
+        # Main title
         title_label = Label(
-            text='Wind Tunnel Controller',
-            font_size=48,
-            size_hint_y=0.3,
-            color=(1, 1, 1, 1)  # White text
+            text='WIND TUNNEL',
+            font_size=dp(48),
+            color=(1, 1, 1, 1),
+            bold=True,
+            size_hint_y=0.6
         )
-        main_layout.add_widget(title_label)
+        header_layout.add_widget(title_label)
         
-        # Add subtitle
+        # Subtitle
         subtitle_label = Label(
-            text='Select Mode:',
-            font_size=32,
-            size_hint_y=0.2,
-            color=(0.8, 0.8, 0.8, 1)  # Light gray text
+            text='CONTROL SYSTEM',
+            font_size=dp(32),
+            color=self.accent_color,
+            size_hint_y=0.4
         )
-        main_layout.add_widget(subtitle_label)
+        header_layout.add_widget(subtitle_label)
         
-        # Create container for buttons
-        button_layout = BoxLayout(orientation='vertical', spacing=20, size_hint_y=0.4)
+        main_layout.add_widget(header_layout)
         
-        # Simulation Mode button - big and green
-        self.simulation_button = Button(
-            text='Simulation Mode',
-            font_size=36,
-            size_hint_y=0.5,
-            background_color=(0.2, 0.8, 0.2, 1),  # Green
-            color=(1, 1, 1, 1)  # White text
+        # Status indicator
+        status_layout = BoxLayout(orientation='horizontal', size_hint_y=0.1, spacing=dp(10))
+        
+        status_icon = Label(
+            text='●',
+            font_size=dp(20),
+            color=self.success_color,
+            size_hint_x=0.1
         )
+        status_layout.add_widget(status_icon)
+        
+        status_text = Label(
+            text='SYSTEM READY - SELECT OPERATION MODE',
+            font_size=dp(16),
+            color=(0.8, 0.8, 0.8, 1),
+            size_hint_x=0.9
+        )
+        status_layout.add_widget(status_text)
+        
+        main_layout.add_widget(status_layout)
+        
+        # Button section
+        button_layout = BoxLayout(orientation='vertical', spacing=dp(25), size_hint_y=0.4)
+        
+        # Simulation Mode button
+        self.simulation_button = ModernButton(
+            text='⚡ SIMULATION MODE',
+            font_size=dp(24),
+            color=(1, 1, 1, 1),
+            bold=True,
+            size_hint_y=0.5
+        )
+        self.simulation_button.button_color = self.success_color
+        self.simulation_button.create_background()
         self.simulation_button.bind(on_press=self.start_simulation)
         button_layout.add_widget(self.simulation_button)
         
-        # Exit button - big and red
-        self.exit_button = Button(
-            text='Exit',
-            font_size=36,
-            size_hint_y=0.5,
-            background_color=(0.8, 0.2, 0.2, 1),  # Red
-            color=(1, 1, 1, 1)  # White text
+        # Exit button
+        self.exit_button = ModernButton(
+            text='⏻ EXIT SYSTEM',
+            font_size=dp(24),
+            color=(1, 1, 1, 1),
+            bold=True,
+            size_hint_y=0.5
         )
+        self.exit_button.button_color = self.danger_color
+        self.exit_button.create_background()
         self.exit_button.bind(on_press=self.exit_app)
         button_layout.add_widget(self.exit_button)
         
         main_layout.add_widget(button_layout)
         
-        # Add info text at bottom
+        # Footer info
+        info_layout = BoxLayout(orientation='vertical', size_hint_y=0.1, spacing=dp(5))
+        
         info_label = Label(
-            text='Touch the buttons above to make your selection',
-            font_size=20,
-            size_hint_y=0.1,
-            color=(0.6, 0.6, 0.6, 1)  # Gray text
+            text='Touch buttons above to select mode • F11 for fullscreen',
+            font_size=dp(14),
+            color=(0.5, 0.5, 0.5, 1),
+            size_hint_y=0.5
         )
-        main_layout.add_widget(info_label)
+        info_layout.add_widget(info_label)
+        
+        version_label = Label(
+            text='v1.0 | Modern UI | Kivy Framework',
+            font_size=dp(12),
+            color=(0.4, 0.4, 0.4, 1),
+            size_hint_y=0.5
+        )
+        info_layout.add_widget(version_label)
+        
+        main_layout.add_widget(info_layout)
         
         # Add everything to the screen
         self.add_widget(main_layout)
         
-        print("Mode selection screen created")
+        print("Modern mode selection screen created with professional styling")
+    
+    def update_background(self, *args):
+        """Update background when size changes"""
+        self.bg_rect.size = self.size
+        self.bg_rect.pos = self.pos
+        self.overlay_rect.size = self.size
+        self.overlay_rect.pos = self.pos
     
     def start_simulation(self, button):
-        """
-        Called when user presses the Simulation Mode button.
-        Switches to the dashboard screen.
-        """
+        """Start simulation mode with modern transition"""
         print("User selected Simulation Mode")
         
-        # Change the button color to show it was pressed
-        button.background_color = (0.1, 0.6, 0.1, 1)  # Darker green
-        
-        # Switch to dashboard screen
+        # Create a smooth transition effect
+        anim = Animation(opacity=0.7, duration=0.1)
+        anim.bind(on_complete=self.switch_to_dashboard)
+        anim.start(button)
+    
+    def switch_to_dashboard(self, anim, widget):
+        """Switch to dashboard after animation"""
         self.manager.current = 'dashboard'
         
-        # Reset button color after a short delay
-        from kivy.clock import Clock
-        Clock.schedule_once(lambda dt: self.reset_button_color(button), 0.2)
+        # Reset button opacity
+        widget.opacity = 1.0
     
     def exit_app(self, button):
-        """
-        Called when user presses the Exit button.
-        Closes the application.
-        """
+        """Exit the application with confirmation"""
         print("User selected Exit")
         
-        # Change the button color to show it was pressed
-        button.background_color = (0.6, 0.1, 0.1, 1)  # Darker red
-        
-        # Close the app
-        from kivy.app import App
-        App.get_running_app().stop()
+        # Animate button press
+        anim = Animation(opacity=0.7, duration=0.1)
+        anim.bind(on_complete=self.close_app)
+        anim.start(button)
     
-    def reset_button_color(self, button):
-        """Reset button color back to normal"""
-        if button == self.simulation_button:
-            button.background_color = (0.2, 0.8, 0.2, 1)  # Green
-        elif button == self.exit_button:
-            button.background_color = (0.8, 0.2, 0.2, 1)  # Red 
+    def close_app(self, anim, widget):
+        """Close the application"""
+        from kivy.app import App
+        App.get_running_app().stop() 
