@@ -140,7 +140,7 @@ class ModernModeScreen(Screen):
         status_layout = BoxLayout(orientation='horizontal', size_hint_y=0.1, spacing=dp(10))
         
         status_icon = Label(
-            text='●',
+            text='*',
             font_size=dp(20),
             color=self.success_color,
             size_hint_x=0.1
@@ -162,7 +162,7 @@ class ModernModeScreen(Screen):
         
         # Simulation Mode button
         self.simulation_button = ModernButton(
-            text='⚡ SIMULATION MODE',
+            text='>> SIMULATION MODE',
             font_size=dp(24),
             color=(1, 1, 1, 1),
             bold=True,
@@ -174,7 +174,7 @@ class ModernModeScreen(Screen):
         
         # Exit button
         self.exit_button = ModernButton(
-            text='⏻ EXIT SYSTEM',
+            text='X EXIT SYSTEM',
             font_size=dp(24),
             color=(1, 1, 1, 1),
             bold=True,

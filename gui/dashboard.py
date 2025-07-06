@@ -212,7 +212,7 @@ class ModernDashboardScreen(Screen):
         
         # Status indicator
         self.status_label = Label(
-            text='● SIMULATION ACTIVE',
+            text='* SIMULATION ACTIVE',
             font_size=dp(16),
             color=self.success_color,
             size_hint_x=0.3
@@ -271,8 +271,8 @@ class ModernDashboardScreen(Screen):
         button_layout = BoxLayout(orientation='horizontal', spacing=dp(20), size_hint_y=0.1)
         
         # Modern buttons
-        back_button = self.create_modern_button("◀ BACK", self.go_back, (0.4, 0.4, 0.4, 1))
-        reset_button = self.create_modern_button("⟲ RESET", self.reset_simulation, self.accent_color)
+        back_button = self.create_modern_button("< BACK", self.go_back, (0.4, 0.4, 0.4, 1))
+        reset_button = self.create_modern_button("O RESET", self.reset_simulation, self.accent_color)
         
         button_layout.add_widget(back_button)
         button_layout.add_widget(reset_button)
@@ -345,7 +345,7 @@ class ModernDashboardScreen(Screen):
     def on_enter(self):
         """Called when this screen becomes active"""
         self.update_event = Clock.schedule_interval(self.update_data, 0.1)  # 10 Hz
-        self.status_label.text = '● SIMULATION ACTIVE'
+        self.status_label.text = '* SIMULATION ACTIVE'
         self.status_label.color = self.success_color
         print("Modern dashboard started - updating data every 0.1 seconds")
     
@@ -354,7 +354,7 @@ class ModernDashboardScreen(Screen):
         if self.update_event:
             self.update_event.cancel()
             self.update_event = None
-        self.status_label.text = '● SIMULATION PAUSED'
+        self.status_label.text = '* SIMULATION PAUSED'
         self.status_label.color = self.warning_color
         print("Modern dashboard stopped")
     
