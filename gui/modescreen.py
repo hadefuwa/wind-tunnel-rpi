@@ -11,7 +11,10 @@ class ModernButton(Button):
     A modern button with hover effects, shadows, and sleek styling.
     """
     
-    def __init__(self, **kwargs):
+    def __init__(self, button_color=(0.5, 0.5, 0.5, 1), **kwargs):
+        # Set default button color first
+        self.button_color = button_color
+        
         super().__init__(**kwargs)
         self.background_color = (0, 0, 0, 0)  # Transparent default background
         self.bind(state=self.on_state_change)
@@ -44,6 +47,18 @@ class ModernButton(Button):
         self.shadow_rect.pos = (self.x - dp(3), self.y - dp(3))
         self.bg_rect.size = self.size
         self.bg_rect.pos = self.pos
+    
+    def set_button_color(self, color):
+        """Set the button color and update graphics"""
+        self.button_color = color
+        # Update the background color
+        with self.canvas.before:
+            Color(*self.button_color)
+            self.bg_rect = RoundedRectangle(
+                size=self.size,
+                pos=self.pos,
+                radius=[dp(12)]
+            )
     
     def on_state_change(self, instance, value):
         """Handle button press animation"""
@@ -151,10 +166,9 @@ class ModernModeScreen(Screen):
             font_size=dp(24),
             color=(1, 1, 1, 1),
             bold=True,
-            size_hint_y=0.5
+            size_hint_y=0.5,
+            button_color=self.success_color  # Pass color during creation
         )
-        self.simulation_button.button_color = self.success_color
-        self.simulation_button.create_background()
         self.simulation_button.bind(on_press=self.start_simulation)
         button_layout.add_widget(self.simulation_button)
         
@@ -164,10 +178,9 @@ class ModernModeScreen(Screen):
             font_size=dp(24),
             color=(1, 1, 1, 1),
             bold=True,
-            size_hint_y=0.5
+            size_hint_y=0.5,
+            button_color=self.danger_color  # Pass color during creation
         )
-        self.exit_button.button_color = self.danger_color
-        self.exit_button.create_background()
         self.exit_button.bind(on_press=self.exit_app)
         button_layout.add_widget(self.exit_button)
         
