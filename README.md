@@ -1,7 +1,7 @@
 # 🌪️ Wind Tunnel Controller
 
 <div align="center">
-![image](https://github.com/user-attachments/assets/7d3d1079-bde5-4cc0-8db8-621441af9533)
+
 
 **A professional-grade wind tunnel control system with modern UI and real-time data visualization**
 
@@ -15,6 +15,7 @@
 </div>
 
 ---
+![image](https://github.com/user-attachments/assets/42fe8e17-dc3e-4357-a329-580e6ce6a0b8)
 
 ## ✨ Features
 
